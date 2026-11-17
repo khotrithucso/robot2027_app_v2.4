@@ -1,0 +1,13 @@
+{
+  "name": "robot2027-app-v2-4",
+  "version": "2.4.0",
+  "description": "Robot 2027 V2.4 Pro - Full-Body Bilingual AI Companion & Multi-Tag Collector",
+  "scripts": {
+    "build": "echo 'Static www ready for Capacitor'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/cli": "^6.1.2",
+    "@capacitor/core": "^6.1.2"
+  }
+}

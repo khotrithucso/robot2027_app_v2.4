@@ -1,0 +1,10 @@
+{
+  "appId": "vn.io.khotrithucso.robot2027",
+  "appName": "Robot 2027 V2.4",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  }
+}

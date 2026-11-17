@@ -1,0 +1,58 @@
+name: Build Robot2027 V2.4 Pro APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout code từ GitHub
+        uses: actions/checkout@v4
+
+      - name: 2. Cài đặt Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: 3. Cài đặt Java 21 (Cho Gradle Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: 4. Cài thư viện Capacitor & Tạo thư mục Android
+        run: |
+          npm install --legacy-peer-deps
+          npx cap add android
+
+      - name: 5. Tải lõi C++ llama.cpp (bản ổn định b4600)
+        run: |
+          mkdir -p android/app/src/main/cpp
+          git clone --depth 1 --branch b4600 https://github.com/ggml-org/llama.cpp.git android/app/src/main/cpp/llama.cpp
+
+      - name: 6. Chép cầu nối C++ JNI và Java Plugin vào Android
+        run: |
+          cp native_android/cpp/CMakeLists.txt android/app/src/main/cpp/
+          cp native_android/cpp/llama_jni.cpp android/app/src/main/cpp/
+          mkdir -p android/app/src/main/java/vn/io/khotrithucso/robot2027
+          cp native_android/java/vn/io/khotrithucso/robot2027/*.java android/app/src/main/java/vn/io/khotrithucso/robot2027/
+
+      - name: 7. Cấu hình CMake NDK, minSdk 24 và quyền hệ thống
+        run: python3 native_android/patch_gradle.py
+
+      - name: 8. Đồng bộ web vào Android & Build file APK
+        run: |
+          npx cap sync android
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: 9. Xuất file APK V2.4 Pro
+        uses: actions/upload-artifact@v4
+        with:
+          name: Robot2027-v2.4-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
