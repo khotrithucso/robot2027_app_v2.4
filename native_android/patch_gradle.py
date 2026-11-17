@@ -17,7 +17,7 @@ if os.path.exists(app_gradle):
         g = f.read()
 
     if "externalNativeBuild" not in g:
-        cmake_block = '''
+        cmake_block = """
     defaultConfig {
         ndk {
             abiFilters 'arm64-v8a'
@@ -34,9 +34,8 @@ if os.path.exists(app_gradle):
             version "3.22.1"
         }
     }
-'''
-        g = g.replace("android {", "android {
-" + cmake_block, 1)
+"""
+        g = g.replace("android {", "android {\n" + cmake_block, 1)
     with open(app_gradle, "w", encoding="utf-8") as f:
         f.write(g)
 
@@ -55,8 +54,7 @@ if os.path.exists(manifest_path):
     ]
     for p in perms:
         if p not in m:
-            m = m.replace("<application", p + "
-    <application", 1)
+            m = m.replace("<application", p + "\n    <application", 1)
 
     if 'usesCleartextTraffic' not in m:
         m = m.replace("<application", '<application android:usesCleartextTraffic="true" android:requestLegacyExternalStorage="true"', 1)
